@@ -1,16 +1,21 @@
 import jwt from 'jsonwebtoken'
 
-const generateTokenAndSetCookie =  (userId, res)=>{
+
+
+ const generateTokenAndSetCookie =  (userId, res)=>{
   const token = jwt.sign({userId}, process.env.JWT_SECRET, {
     expiresIn: "15d"
   })
 
-  res.cookie("jwt", token,{
-    maxAge: 15 * 24 * 60 * 60 * 1000, // milliseconds
-    httpOnly: true,  //prevents Xss attacks also called cross-site scripting attacks
-    sameSite: "strict",
-    secure: process.env.NODE_ENV !== "development"
-  } )
+  console.log(token)
+ 
+  res.cookie("jwt", token, {
+    maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
+    httpOnly: true,  // Prevent XSS attacks
+    sameSite: "lax", // Allows cookies within the same site (works fine for development)
+    secure: false    // Since you're using HTTP and not HTTPS in development
+  });
+  
 }
 
 

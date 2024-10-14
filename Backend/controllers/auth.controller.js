@@ -7,15 +7,20 @@ export const Signup = async (req, res) => {
 
         console.log("Request body:", req.body)
 
-        const { fullname, username, password, confirmpassword, gender } = req.body
+        const { fullname, username, password, confirmPassword, gender } = req.body
 
-        if (password != confirmpassword) {
-            return res.status(400).json({ error: "Passwords do not match" })
+        if (password !== confirmPassword) {
+            return res.status(401).json({ error: "Passwords do not match" })
         }
 
         const user = await User.findOne({ username })
         if (user) {
-            return res.status(400).json({ error: "Username already exists" })
+            return res.status(401).json({ error: "Username already exists" })
+        }
+
+        const userfullname = await User.findOne({ fullname })
+        if (userfullname) {
+            return res.status(401).json({ error: "User with this name already exists" })
         }
 
         //HASH PASSWORD HERE
@@ -66,13 +71,18 @@ export const login =  async (req, res)=> {
     const { username, password} = req.body
 
     const user = await User.findOne({username})
+
+    if(!user){
+        return  res.status(400).json({ error: "Invalid Username or password"})
+      }
+
     const ispasswordCorrect = await bcrypt.compare(password, user?.password || "")
 
-    if(!user || !ispasswordCorrect){
-      return  res.status(400).json({ error: "Invalid Username or password"})
+    if (!ispasswordCorrect) {
+        return res.status(400).json({ error: "Invalid username or password" });
     }
 
-    generateTokenAndSetCookie(user._id , res)
+  generateTokenAndSetCookie(user._id , res)
 
     return res.status(200).json({
         _id: user._id,

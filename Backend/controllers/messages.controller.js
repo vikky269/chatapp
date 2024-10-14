@@ -6,8 +6,8 @@ import Message from "../models/message.model.js"
         const {message} = req.body
         const{ id: receiverId } = req.params    
         const senderId = req.user._id 
-
-        let conversation = await Conversation.findOne({
+       
+    let conversation = await Conversation.findOne({
             participants:{$all: [senderId, receiverId] }
         })
 
@@ -45,6 +45,10 @@ export const getMessages = async (req, res)=> {
         const conversation = await Conversation.findOne({
             participants:{$all: [senderId, userToChatId] }
         }).populate("messages")
+        
+        if (!conversation) {
+            return res.status(404).json({ error: "No conversation found" });
+        }
 
         res.status(200).json(conversation.messages)
     } catch (error) {

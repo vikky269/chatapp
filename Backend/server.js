@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
+import cors from "cors"
 
 
 import authRoutes from './routes/auth.routes.js'
@@ -19,10 +20,16 @@ dotenv.config()
 // app.get('/', (req, res)=> {
 //    res.send("Hello worldd!!!")
 // })
+//app.use(cors())
+
 
 app.use(express.json())
 app.use(cookieParser())
 
+app.use(cors({
+    origin: 'http://localhost:5173', // Your frontend URL
+    credentials: true // This allows the cookie to be sent
+}));
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
