@@ -7,11 +7,11 @@ import cors from "cors"
 import authRoutes from './routes/auth.routes.js'
 import userRoutes from './routes/user.routes.js'
 import messageRoutes from './routes/message.routes.js'
-
+import { app, server } from "./socket/socket.js"
 
 import connectToMongodb from "./db/connectToMongodb.js"
 
-const app = express()
+
 const PORT = process.env.PORT || 3000
 
 dotenv.config()
@@ -35,7 +35,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/messages', messageRoutes)
 
-app.listen(PORT, ()=> {
+server.listen(PORT, ()=> {
     connectToMongodb()
     console.log(`App running on port ${PORT}`)
 }
